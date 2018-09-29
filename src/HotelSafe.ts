@@ -38,20 +38,6 @@ type SafeData = {
 export default class HotelSafe extends StateMachine<SafeData> {
     handlers: Handlers<SafeData> = [
 
-        // Timeout from LOCKING if inactive
-        [['enter#*_#open/locking',
-            'enter#*_#closed/unlocking'], ({data}) =>
-            keepState().eventTimeout(data.codeTimeout)],
-
-        // if we enter a complex state, stay there and set a timeout
-        ['enter#*_#:state/*_', ({data}) =>
-            keepState().timeout(data.msgDisplay)],
-
-        // If we timeout in a complex state, go to the base state
-        [['genericTimeout#*_#:state/*_',
-            'eventTimeout#*_#:state/*_',],
-            ({args}) => nextState(args.state)],
-
         // Clear data when safe enters OPEN
         ['enter#*_#open', () => keepState().data({
             code: {$set: []},
@@ -59,23 +45,23 @@ export default class HotelSafe extends StateMachine<SafeData> {
             message: {$set: 'R = lock'},
         })],
 
-        // User pressed RESET -- go to LOCKING
+        // User pressed RESET -- get new code
         ['cast#reset#open', () => nextState('open/locking').data({
             message: {$set: 'Enter Code'},
         })],
 
         // Track the last {codeSize} digits.
+        // show code on display
         ['cast#button/:digit#open/locking', ({args, data}) => {
             let code = pushFixed(Number(args.digit), data.code, data.codeSize)
-            return keepState()
-                .data({
-                    code: {$set: code},
-                    message: {$set: code.join('')},
-                })
-                .eventTimeout(data.codeTimeout)
+            return keepState().data({
+                code: {$set: code},
+                message: {$set: code.join('')},
+            }).eventTimeout(data.codeTimeout)
         }],
 
         // User pressed LOCK. CLose safe if code is long enough
+        // else, repeat state (sets timeout on reentry)
         ['cast#lock#open/locking', ({data}) =>
             data.code.length === data.codeSize ?
             nextState('closed/success').data({
@@ -89,9 +75,9 @@ export default class HotelSafe extends StateMachine<SafeData> {
             message: {$set: 'Locked'}
         })],
 
+        // Postpone button press and go to closed/unlocking
         ['cast#button/*_#closed', ({}) =>
             nextState('closed/unlocking').postpone()],
-
 
         // User entered digit(s).
         // Keep state if code is not long enough
@@ -100,19 +86,37 @@ export default class HotelSafe extends StateMachine<SafeData> {
         ['cast#button/:digit#closed/unlocking', ({args, data}) => {
             let digit = Number(args.digit)
             let input = data.input.concat(digit)
-            return input.length < data.code.length ?
-                   keepState().data({
-                       input: {$push: [digit]},
-                       message: {$set: "*".repeat(input.length)}
-                   }) :
-                   arrayEqual(data.code, input) ?
-                   nextState('open/success').data({
-                       message: {$set: "Opened"}
-                   }) :
-                   nextState('closed/error').data({
-                       message: {$set: "ERROR"}
-                   })
+
+            // code is the correct length. Decision time.
+            if (input.length >= data.code.length) {
+                return arrayEqual(data.code, input) ?
+                       nextState('open/success')
+                           .data({message: {$set: "Opened"}}) :
+                       nextState('closed/error')
+                           .data({message: {$set: "ERROR"}})
+            }
+
+            // Not long enough. Keep collecting digits.
+            // Show masked code
+            return keepState().data({
+                input: {$push: [digit]},
+                message: {$set: "*".repeat(input.length)}
+            })
         }],
+
+        // These states timeout on inactivity (eventTimeout)
+        [['enter#*_#open/locking',
+            'enter#*_#closed/unlocking'], ({data}) =>
+            keepState().eventTimeout(data.codeTimeout)],
+
+        // else if we enter a complex state, stay there and set a timeout
+        ['enter#*_#:state/*_', ({data}) =>
+            keepState().timeout(data.msgDisplay)],
+
+        // If we timeout in a sub state, go to the base state
+        [['genericTimeout#*_#:state/*_',
+            'eventTimeout#*_#:state/*_',],
+            ({args}) => nextState(args.state)],
     ]
 
     initialData: SafeData = {
@@ -131,14 +135,24 @@ export default class HotelSafe extends StateMachine<SafeData> {
         this.initialData.msgDisplay = timeout
     }
 
+    /**
+     * Safe Interface. casts 'reset'
+     */
     reset() {
         this.cast('reset')
     }
 
+    /**
+     * Safe Interface. cast 'lock'
+     */
     lock() {
         this.cast('lock')
     }
 
+    /**
+     * Safe Interface. send button digit
+     * @param digit
+     */
     button(digit: number) {
         this.cast({button: digit})
     }
