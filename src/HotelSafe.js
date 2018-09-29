@@ -52,24 +52,24 @@ var HotelSafe = /** @class */ (function (_super) {
                     message: { $set: 'Enter Code' },
                 }); }],
             // Track the last {codeSize} digits.
-            // show code on display
+            // show code on display. Repeat state for setting timeout
             ['cast#button/:digit#open/locking', function (_a) {
                     var args = _a.args, data = _a.data;
                     var code = pushFixed_1.default(Number(args.digit), data.code, data.codeSize);
-                    return gen_statem_1.keepState().data({
+                    return gen_statem_1.repeatState().data({
                         code: { $set: code },
                         message: { $set: code.join('') },
-                    }).eventTimeout(data.codeTimeout);
+                    });
                 }],
             // User pressed LOCK. CLose safe if code is long enough
             // else, repeat state (sets timeout on reentry)
             ['cast#lock#open/locking', function (_a) {
                     var data = _a.data;
-                    return data.code.length === data.codeSize ?
+                    return data.code.length !== data.codeSize ?
+                        gen_statem_1.repeatState() :
                         gen_statem_1.nextState('closed/success').data({
                             message: { $set: "**" + data.code.join('') + "**" },
-                        }) :
-                        gen_statem_1.repeatState();
+                        });
                 }],
             // Clear input when safe is closed
             ['enter#*_#closed', function () { return gen_statem_1.keepState().data({
@@ -97,11 +97,12 @@ var HotelSafe = /** @class */ (function (_super) {
                                 .data({ message: { $set: "ERROR" } });
                     }
                     // Not long enough. Keep collecting digits.
-                    // Show masked code
-                    return gen_statem_1.keepState().data({
+                    // Show masked code. Repeat state for
+                    // setting timeout
+                    return gen_statem_1.repeatState().data({
                         input: { $push: [digit] },
                         message: { $set: "*".repeat(input.length) }
-                    }).eventTimeout(data.codeTimeout);
+                    });
                 }],
             // These states timeout on inactivity (eventTimeout)
             [['enter#*_#open/locking',
@@ -109,7 +110,7 @@ var HotelSafe = /** @class */ (function (_super) {
                     var data = _a.data;
                     return gen_statem_1.keepState().eventTimeout(data.codeTimeout);
                 }],
-            // else if we enter a complex state, stay there and set a timeout
+            // these states just timeout 
             ['enter#*_#:state/*_', function (_a) {
                     var data = _a.data;
                     return gen_statem_1.keepState().timeout(data.msgDisplay);
