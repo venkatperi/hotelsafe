@@ -6,7 +6,7 @@
       </div>
 
       <div class="col float-right text-right">
-        <a class="icon" href="https://github.com/venkatperi/statem" target="_blank">
+        <a class="icon" href="https://github.com/venkatperi/hotelsafe" target="_blank">
           <font-awesome-icon :icon="['fab', 'github']" size="sm"/>
         </a>
       </div>
