@@ -110,7 +110,7 @@ var HotelSafe = /** @class */ (function (_super) {
                     var data = _a.data;
                     return gen_statem_1.keepState().eventTimeout(data.codeTimeout);
                 }],
-            // these states just timeout 
+            // these states just timeout
             ['enter#*_#:state/*_', function (_a) {
                     var data = _a.data;
                     return gen_statem_1.keepState().timeout(data.msgDisplay);

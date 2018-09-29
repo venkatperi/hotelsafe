@@ -30,6 +30,22 @@
         <li><a href="#" v-on:click="lock()">L</a></li>
       </ul>
     </div>
+
+    <div class="instructions">
+      <h4>Locking the Safe</h4>
+      <ul>
+        <li>Press Reset (R). The display will prompt for a new code. </li>
+        <li>Enter a 4 digit code and then press Lock (L).</li>
+        <li>The code will flash. The safe is now locked.</li>
+      </ul>
+
+      <h4>Unlocking the Safe</h4>
+      <ul>
+        <li>Enter the 4 digit code.</li>
+        <li>The safe will flash OPENED if the code is correct. The safe is now open.</li>
+        <li>If the code is incorrect, the display will flash ERROR and the safe will stay locked.</li>
+      </ul>
+    </div>
   </div>
 </template>
 
@@ -94,6 +110,30 @@
 </script>
 
 <style lang="scss">
+
+  .fullpanel {
+    width: 300px;
+    margin: 0 auto;
+  }
+
+  h4 {
+    margin-top: 10px;
+    font-size: 17px;
+    font-weight: 600;
+    color: #444;
+  }
+
+  .instructions {
+    /*font-family: 'Lato', serif;*/
+    font-family: "Share Tech Mono", sans-serif;
+    text-transform: uppercase;
+    font-size: 13px;
+    color: #888;
+    padding: 0 12px;
+    ul {
+      margin-left: -15px;
+    }
+  }
 
   .display {
     width: 180px;
