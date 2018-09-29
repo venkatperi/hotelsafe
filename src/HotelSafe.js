@@ -101,7 +101,7 @@ var HotelSafe = /** @class */ (function (_super) {
                     return gen_statem_1.keepState().data({
                         input: { $push: [digit] },
                         message: { $set: "*".repeat(input.length) }
-                    });
+                    }).eventTimeout(data.codeTimeout);
                 }],
             // These states timeout on inactivity (eventTimeout)
             [['enter#*_#open/locking',

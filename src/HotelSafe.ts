@@ -101,7 +101,7 @@ export default class HotelSafe extends StateMachine<SafeData> {
             return keepState().data({
                 input: {$push: [digit]},
                 message: {$set: "*".repeat(input.length)}
-            })
+            }).eventTimeout(data.codeTimeout)
         }],
 
         // These states timeout on inactivity (eventTimeout)
