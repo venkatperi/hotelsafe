@@ -1,10 +1,14 @@
 <template>
   <div class="fullpanel">
     <div class="panel black">
-   <textarea rows="1"
-     v-model="message"
-     :class="['input decimal', blink?'blink':'']">
-      </textarea>
+      <div class="display">
+        <div class="state"
+          v-html="state"></div>
+        <textarea rows="1"
+          v-model="message"
+          :class="['input decimal', blink?'blink':'']">
+        </textarea>
+      </div>
       <ul>
         <li><a href="#" v-on:click="button(1)">1</a></li>
         <li><a href="#" v-on:click="button(2)">2</a></li>
@@ -91,15 +95,29 @@
 
 <style lang="scss">
 
+  .display {
+    width: 180px;
+    position: relative;
+    margin: 0 auto;
+    color: #000;
+    font-family: 'News Cycle', sans-serif;
+  }
+
+  .state {
+    position: absolute;
+    left: 10px;
+    top: 0;
+    font-size: 15px;
+  }
+
   textarea.input {
     resize: none;
 
     color: rgba(0, 0, 0, 0.7);
-    width: 180px;
+    width: 100%;
     display: block;
     text-align: center;
-    margin: 0 auto;
-    padding: 0 20px;
+    padding: 15px 5px;
     min-height: 60px;
 
     font-family: 'News Cycle', sans-serif;
