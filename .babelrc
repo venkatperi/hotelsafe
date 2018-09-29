@@ -1,0 +1,16 @@
+{
+  //  "presets": [["env", { "modules": false }]],
+  "plugins": [
+    "lodash"
+  ],
+  "presets": [
+    [
+      "env",
+      {
+        "targets": {
+          "node": 6
+        }
+      }
+    ]
+  ]
+}

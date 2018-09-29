@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="description" content="Convert roman numbers to decimal and back. Supports vinculum over-bar extensions.">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+  <title>Hotel Safe</title>
+</head>
+
+<body>
+<div id="app" class="container-fluid">
+  <div class="row">
+    <router-view name="core"></router-view>
+    <div class="col-sm-1 col-md-2 col-lg-3"></div>
+    <div class="col col-sm10 col-md-8 col-lg-6">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col">
+            <router-view name="header"></router-view>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col">
+            <div id="content">
+              <router-view name="main"></router-view>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col">
+            <router-view name="footer"></router-view>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-1 col-md-2 col-lg-3"></div>
+  </div>
+</div>
+<script src="/vendor.js"></script>
+<script src="/main.js"></script>
+</body>
+
+</html>
