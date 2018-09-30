@@ -21,7 +21,7 @@
     font-family: "Share Tech Mono", sans-serif;
     text-transform: uppercase;
     font-size: 0.5rem;
-    color: #aaa;
+    color: #555;
   }
 
   .mastfoot {

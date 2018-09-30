@@ -2,7 +2,7 @@
   <div class="container-fluid menu p-0 mt-2 mb-4">
     <div class="row">
       <div class="brand col-auto float-left align-middle">
-        <p>Hotel Safe Simulator</p>
+        <p>Ye Olde Hotel Safe Simulator</p>
       </div>
 
       <div class="col float-right text-right">
@@ -30,9 +30,12 @@
 
 <style lang="scss" scoped>
 
+  .menu {
+    color: #222;
+  }
   .icon {
     vertical-align: middle;
-    color: #333;
+    color: #222;
   }
 
   .brand {
@@ -40,7 +43,6 @@
     font-family: "Share Tech Mono", sans-serif;
     font-size: 1.4em;
     text-transform: uppercase;
-    color: #666;
   }
 
   .nav-masthead {

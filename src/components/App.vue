@@ -120,7 +120,7 @@
     margin-top: 10px;
     font-size: 17px;
     font-weight: 600;
-    color: #444;
+    color: #222;
   }
 
   .instructions {
@@ -128,10 +128,11 @@
     font-family: "Share Tech Mono", sans-serif;
     text-transform: uppercase;
     font-size: 13px;
-    color: #888;
+    line-height: 19px;
+    color: #222;
     padding: 0 12px;
     ul {
-      margin-left: -15px;
+      margin-left: -19px;
     }
   }
 
@@ -139,7 +140,7 @@
     width: 180px;
     position: relative;
     margin: 0 auto;
-    color: #000;
+    color: #888;
     font-family: 'News Cycle', sans-serif;
   }
 
