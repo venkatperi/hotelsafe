@@ -26,11 +26,13 @@ import StateMachine, {
 import { arrayEqual } from "./arrayEqual";
 import pushFixed from "./pushFixed";
 
+/**
+ * The state machine's data type
+ */
 type SafeData = {
     code: Array<number>,
     input: Array<number>,
-    codeTimeout: Timeout,
-    msgDisplay: Timeout,
+    timeout: Timeout,
     codeSize: number,
     message?: string
 }
@@ -42,7 +44,7 @@ export default class HotelSafe extends StateMachine<SafeData> {
         ['enter#*_#open', () => keepState().data({
             code: {$set: []},
             input: {$set: []},
-            message: {$set: 'R = lock'},
+            message: {$set: 'Open'},
         })],
 
         // User pressed RESET -- get new code
@@ -89,11 +91,11 @@ export default class HotelSafe extends StateMachine<SafeData> {
 
             // code is the correct length. Decision time.
             if (input.length >= data.code.length) {
-                return arrayEqual(data.code, input) ?
-                       nextState('open/success')
-                           .data({message: {$set: "Opened"}}) :
-                       nextState('closed/error')
-                           .data({message: {$set: "ERROR"}})
+                let [state, msg] = arrayEqual(data.code, input) ?
+                    ['open/success', "Opened"] :
+                    ['closed/error', "ERROR"]
+
+                return nextState(state).data({message: {$set: msg}})
             }
 
             // Not long enough. Keep collecting digits.
@@ -108,32 +110,30 @@ export default class HotelSafe extends StateMachine<SafeData> {
         // These states timeout on inactivity (eventTimeout)
         [['enter#*_#open/locking',
             'enter#*_#closed/unlocking'], ({data}) =>
-            keepState().eventTimeout(data.codeTimeout)],
+            keepState().eventTimeout(data.timeout)],
 
         // these states just timeout
         ['enter#*_#:state/*_', ({data}) =>
-            keepState().timeout(data.msgDisplay)],
+            keepState().timeout(data.timeout)],
 
         // If we timeout in a sub state, go to the base state
         [['genericTimeout#*_#:state/*_',
-            'eventTimeout#*_#:state/*_',],
-            ({args}) => nextState(args.state)],
+            'eventTimeout#*_#:state/*_',], ({args}) =>
+            nextState(args.state)],
     ]
 
     initialData: SafeData = {
         code: [],
         codeSize: 4,
-        codeTimeout: 200,
+        timeout: 200,
         input: [],
-        msgDisplay: 200,
     }
 
     initialState = 'open'
 
     constructor(timeout: Timeout) {
         super()
-        this.initialData.codeTimeout = timeout
-        this.initialData.msgDisplay = timeout
+        this.initialData.timeout = timeout
     }
 
     /**

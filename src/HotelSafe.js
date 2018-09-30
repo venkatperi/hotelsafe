@@ -45,7 +45,7 @@ var HotelSafe = /** @class */ (function (_super) {
             ['enter#*_#open', function () { return gen_statem_1.keepState().data({
                     code: { $set: [] },
                     input: { $set: [] },
-                    message: { $set: 'R = lock' },
+                    message: { $set: 'Open' },
                 }); }],
             // User pressed RESET -- get new code
             ['cast#reset#open', function () { return gen_statem_1.nextState('open/locking').data({
@@ -90,11 +90,10 @@ var HotelSafe = /** @class */ (function (_super) {
                     var input = data.input.concat(digit);
                     // code is the correct length. Decision time.
                     if (input.length >= data.code.length) {
-                        return arrayEqual_1.arrayEqual(data.code, input) ?
-                            gen_statem_1.nextState('open/success')
-                                .data({ message: { $set: "Opened" } }) :
-                            gen_statem_1.nextState('closed/error')
-                                .data({ message: { $set: "ERROR" } });
+                        var _b = arrayEqual_1.arrayEqual(data.code, input) ?
+                            ['open/success', "Opened"] :
+                            ['closed/error', "ERROR"], state = _b[0], msg = _b[1];
+                        return gen_statem_1.nextState(state).data({ message: { $set: msg } });
                     }
                     // Not long enough. Keep collecting digits.
                     // Show masked code. Repeat state for
@@ -108,17 +107,16 @@ var HotelSafe = /** @class */ (function (_super) {
             [['enter#*_#open/locking',
                     'enter#*_#closed/unlocking'], function (_a) {
                     var data = _a.data;
-                    return gen_statem_1.keepState().eventTimeout(data.codeTimeout);
+                    return gen_statem_1.keepState().eventTimeout(data.timeout);
                 }],
             // these states just timeout
             ['enter#*_#:state/*_', function (_a) {
                     var data = _a.data;
-                    return gen_statem_1.keepState().timeout(data.msgDisplay);
+                    return gen_statem_1.keepState().timeout(data.timeout);
                 }],
             // If we timeout in a sub state, go to the base state
             [['genericTimeout#*_#:state/*_',
-                    'eventTimeout#*_#:state/*_',],
-                function (_a) {
+                    'eventTimeout#*_#:state/*_',], function (_a) {
                     var args = _a.args;
                     return gen_statem_1.nextState(args.state);
                 }],
@@ -126,13 +124,11 @@ var HotelSafe = /** @class */ (function (_super) {
         _this.initialData = {
             code: [],
             codeSize: 4,
-            codeTimeout: 200,
+            timeout: 200,
             input: [],
-            msgDisplay: 200,
         };
         _this.initialState = 'open';
-        _this.initialData.codeTimeout = timeout;
-        _this.initialData.msgDisplay = timeout;
+        _this.initialData.timeout = timeout;
         return _this;
     }
     /**
