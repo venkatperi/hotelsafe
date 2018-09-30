@@ -5,9 +5,9 @@
         <p>Ye Olde Hotel Safe Simulator</p>
       </div>
 
-      <div class="col float-right text-right">
+      <div class="col icon2 float-right text-right">
         <a class="icon" href="https://github.com/venkatperi/hotelsafe" target="_blank">
-          <font-awesome-icon :icon="['fab', 'github']" size="sm"/>
+          <font-awesome-icon :icon="['fab', 'github']" size="1x"/>
         </a>
       </div>
 
@@ -30,11 +30,10 @@
 
 <style lang="scss" scoped>
 
-  .menu {
-    color: #222;
+  .icon2 {
+    margin-top: 5px;
   }
-  .icon {
-    vertical-align: middle;
+  .menu, .icon  {
     color: #222;
   }
 
