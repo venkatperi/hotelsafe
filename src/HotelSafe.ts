@@ -20,8 +20,8 @@
 //  USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-import StateMachine, {
-    Handlers, keepState, nextState, repeatState, Timeout
+import {
+    Handlers, keepState, nextState, repeatState, StateMachine, Timeout
 } from "gen-statem"
 import { arrayEqual } from "./arrayEqual";
 import pushFixed from "./pushFixed";
@@ -137,21 +137,22 @@ export default class HotelSafe extends StateMachine<SafeData> {
     }
 
     /**
-     * Safe Interface. casts 'reset'
+     * Tells the safe we want to reset the code before locking.
      */
     reset() {
         this.cast('reset')
     }
 
     /**
-     * Safe Interface. cast 'lock'
+     * Tells the safe we're ready to lock the code. Must have a code
+     * with sufficient length otherwise the event is ignored.
      */
     lock() {
         this.cast('lock')
     }
 
     /**
-     * Safe Interface. send button digit
+     * Tells the safe we pressed a button (either during locking or unlocking).
      * @param digit
      */
     button(digit: number) {

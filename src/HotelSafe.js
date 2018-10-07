@@ -132,24 +132,25 @@ var HotelSafe = /** @class */ (function (_super) {
         return _this;
     }
     /**
-     * Safe Interface. casts 'reset'
+     * Tells the safe we want to reset the code before locking.
      */
     HotelSafe.prototype.reset = function () {
         this.cast('reset');
     };
     /**
-     * Safe Interface. cast 'lock'
+     * Tells the safe we're ready to lock the code. Must have a code
+     * with sufficient length otherwise the event is ignored.
      */
     HotelSafe.prototype.lock = function () {
         this.cast('lock');
     };
     /**
-     * Safe Interface. send button digit
+     * Tells the safe we pressed a button (either during locking or unlocking).
      * @param digit
      */
     HotelSafe.prototype.button = function (digit) {
         this.cast({ button: digit });
     };
     return HotelSafe;
-}(gen_statem_1.default));
+}(gen_statem_1.StateMachine));
 exports.default = HotelSafe;

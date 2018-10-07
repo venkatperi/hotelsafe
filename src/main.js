@@ -5,10 +5,10 @@ import {
 } from '@fortawesome/free-brands-svg-icons'
 import {faLink} from '@fortawesome/free-solid-svg-icons'
 import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome'
-import App from 'components/App'
 import AppCore from 'components/AppCore'
 import AppFooter from 'components/AppFooter'
 import AppMenu from 'components/AppMenu'
+import Safe from 'components/Safe'
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 
@@ -20,7 +20,7 @@ Vue.config.productionTip = false
 const appComponents = {
   core: AppCore,
   header: AppMenu,
-  main: App,
+  main: Safe,
   footer: AppFooter,
 }
 
